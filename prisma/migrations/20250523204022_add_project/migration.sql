@@ -6,13 +6,20 @@ CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "first_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "middle_name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "role" TEXT NOT NULL,
-    "gender" "Gender" NOT NULL,
+    "gender" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "image" TEXT,
+    "type" TEXT NOT NULL,
+    "worker_type" TEXT,
     "lastWork" TEXT,
-    "type" TEXT,
     "workTime" INTEGER,
+    "isConfirmDriver" BOOLEAN,
+    "licenseImage" TEXT,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
@@ -26,6 +33,7 @@ CREATE TABLE "service" (
     "description" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "worker_type" TEXT NOT NULL,
+    "price" INTEGER NOT NULL,
 
     CONSTRAINT "service_pkey" PRIMARY KEY ("id")
 );
@@ -37,6 +45,14 @@ CREATE TABLE "Order" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "is_completed" BOOLEAN,
     "total_price" INTEGER NOT NULL,
+    "phone" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "time" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
+    "distance" INTEGER NOT NULL,
+    "floor" INTEGER NOT NULL,
+    "comment" TEXT NOT NULL,
+    "worker_id" INTEGER,
     "user_id" INTEGER,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
@@ -47,8 +63,6 @@ CREATE TABLE "OrderService" (
     "id" SERIAL NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "price" INTEGER NOT NULL,
     "service_id" INTEGER NOT NULL,
     "order_id" INTEGER,
 
@@ -56,10 +70,10 @@ CREATE TABLE "OrderService" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_phone_key" ON "user"("phone");
-
--- CreateIndex
 CREATE UNIQUE INDEX "service_name_key" ON "service"("name");
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_worker_id_fkey" FOREIGN KEY ("worker_id") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE;
