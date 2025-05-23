@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  firstName  String   @map("first_name")
+  lastName   String   @map("last_name")
+  middleName String   @map("middle_name")
+  phone      String
+  role       String
+  gender     String
+  password   String
+  image      String?
+  type       String
+
+  workerType      String?  @map("worker_type")
+  lastWork        String?
+  workTime        Int?
+  isConfirmDriver Boolean?
+  licenseImage    String?
+
+  Order        Order[]
+  WorkerOrders Order[] @relation("WorkerOrders")
+
+  @@map("user")
+}
+
+model Service {
+  id           Int            @id @default(autoincrement())
+  createAt     DateTime       @default(now()) @map("created_at")
+  updateAt     DateTime       @updatedAt @map("updated_at")
+  name         String         @unique
+  description  String
+  image        String
+  workerType   String         @map("worker_type")
+  price        Int
+  OrderService OrderService[]
+
+  @@map("service")
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  isCompleted Boolean? @map("is_completed")
+  totalPrice  Int      @map("total_price")
+  phone       String
+  date        DateTime
+  time        String
+  address     String
+  distance    Int
+  floor       Int
+  comment     String
+  workerId    Int?     @map("worker_id")
+  userId      Int?     @map("user_id")
+
+  Worker User? @relation(fields: [workerId], references: [id], name: "WorkerOrders")
+  User   User? @relation(fields: [userId], references: [id])
+
+  services OrderService[]
+}
+
+model OrderService {
+  id       Int      @id @default(autoincrement())
+  createAt DateTime @default(now()) @map("created_at")
+  updateAt DateTime @updatedAt @map("updated_at")
+
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  order     Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  serviceId Int     @map("service_id")
+  orderId   Int?    @map("order_id")
+}
+
+enum Gender {
+  male
+  female
+}
