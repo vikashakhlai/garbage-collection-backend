@@ -37,10 +37,10 @@ export class AuthRegisterDto {
 
 export class AuthLoginDto {
   @IsString()
-  phone: string;
+  password: string;
 
   @IsString()
-  password: string;
+  phone: string;
 
   @IsString()
   type: string;
