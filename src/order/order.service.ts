@@ -22,7 +22,7 @@ export class OrderService {
   async getAllActiveOrders() {
     return await this.prisma.order.findMany({
       where: {
-        isCompleted: null,
+        status: 'pending',
       },
       include: {
         services: {
@@ -36,7 +36,7 @@ export class OrderService {
   async getAllActiveUserOrders(userId: number) {
     return await this.prisma.order.findMany({
       where: {
-        isCompleted: null,
+        status: 'pending',
         userId: +userId,
       },
       include: {
@@ -99,7 +99,7 @@ export class OrderService {
     return await this.prisma.order.findMany({
       where: {
         userId: +userId,
-        isCompleted: null,
+        status: 'pending',
       },
       include: {
         services: {
@@ -125,15 +125,18 @@ export class OrderService {
     return await this.prisma.order.create({
       data: {
         totalPrice: +dto.totalPrice,
-        isCompleted: null,
+        status: 'pending',
         phone: dto.phone,
         date: convertPostgreDate(dto.date),
         time: dto.time,
         address: dto.address,
         distance: +dto.distance,
         floor: +dto.floor,
-        comment: dto.comment,
+        comment: dto.comment ? dto.comment : '',
         userId: +userId,
+        isDisassembly: dto.isDisassembly,
+        isHeavy: dto.isHeavy,
+        hour: dto.hour,
 
         services: {
           create: dto.servicesIds.map((serviceId) => ({
@@ -168,7 +171,7 @@ export class OrderService {
         id: +orderId,
       },
       data: {
-        isCompleted: true,
+        status: 'processed',
         workerId: +worker.id,
       },
     });
@@ -188,7 +191,7 @@ export class OrderService {
         id: +orderId,
       },
       data: {
-        isCompleted: false,
+        status: 'rejected',
       },
     });
     return 'Заказ успешно отменен';

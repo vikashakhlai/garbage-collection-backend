@@ -56,7 +56,7 @@ export class AuthService {
           workerType: dto.workerType,
           lastWork: dto.lastWork,
           workTime: dto.workTime,
-          // dimensions: dto.dimensions,
+          dimensions: dto.dimensions ? dto.dimensions : 0,
         },
       });
 

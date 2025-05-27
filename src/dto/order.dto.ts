@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateOrderDto {
   @IsNumber()
@@ -21,8 +21,18 @@ export class CreateOrderDto {
   @IsNumber()
   floor: number;
 
+  @IsOptional()
   @IsString()
-  comment: string;
+  comment?: string;
+
+  @IsNumber()
+  hour: number;
+
+  @IsBoolean()
+  isHeavy: boolean;
+
+  @IsBoolean()
+  isDisassembly: boolean;
 
   servicesIds: number[];
 }
