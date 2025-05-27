@@ -25,6 +25,13 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
+  @Get(':id')
+  // @Auth('admin')
+  @Auth()
+  async getUserById(@Param('id') userId: number) {
+    return this.userService.getUserById(userId);
+  }
+
   @UsePipes(new ValidationPipe())
   @Get('profile')
   @Auth()

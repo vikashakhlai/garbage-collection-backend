@@ -41,6 +41,7 @@ export class AuthService {
       );
 
     const salt = await genSalt(10);
+
     if (dto.type === 'worker') {
       const newUser = await this.prisma.user.create({
         data: {

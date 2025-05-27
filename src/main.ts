@@ -11,6 +11,7 @@ async function bootstrap() {
     origin: ['https://garbage-collection.netlify.app', 'http://localhost:3000'],
     credentials: true,
     exposedHeaders: 'set-cookie',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
   await app.listen(4200);
 }
