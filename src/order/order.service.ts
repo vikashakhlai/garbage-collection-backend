@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from 'src/dto/order.dto';
 import { PrismaService } from 'src/prisma.service';
+import { convertPostgreDate } from 'src/utils/convertPostgreDate';
 
 @Injectable()
 export class OrderService {
@@ -126,7 +127,7 @@ export class OrderService {
         totalPrice: +dto.totalPrice,
         isCompleted: null,
         phone: dto.phone,
-        date: new Date(dto.date),
+        date: convertPostgreDate(dto.date),
         time: dto.time,
         address: dto.address,
         distance: +dto.distance,

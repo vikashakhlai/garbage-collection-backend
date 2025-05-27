@@ -33,6 +33,10 @@ export class AuthRegisterDto {
   @IsOptional()
   @IsNumber()
   workTime?: number;
+
+  @IsOptional()
+  @IsNumber()
+  dimensions?: number;
 }
 
 export class AuthLoginDto {

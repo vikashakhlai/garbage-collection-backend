@@ -32,6 +32,7 @@ model User {
   workTime        Int?
   isConfirmDriver Boolean?
   licenseImage    String?
+  dimensions      Int?
 
   Order        Order[]
   WorkerOrders Order[] @relation("WorkerOrders")
@@ -54,20 +55,24 @@ model Service {
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  isCompleted Boolean? @map("is_completed")
-  totalPrice  Int      @map("total_price")
-  phone       String
-  date        DateTime
-  time        String
-  address     String
-  distance    Int
-  floor       Int
-  comment     String
-  workerId    Int?     @map("worker_id")
-  userId      Int?     @map("user_id")
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  // isCompleted Boolean? @map("is_completed")
+  status        OrderStatus
+  totalPrice    Int         @map("total_price")
+  phone         String
+  date          DateTime
+  time          String
+  address       String
+  distance      Int
+  hour          Int
+  floor         Int
+  isHeavy       Boolean
+  isDisassembly Boolean
+  comment       String?
+  workerId      Int?        @map("worker_id")
+  userId        Int?        @map("user_id")
 
   Worker User? @relation(fields: [workerId], references: [id], name: "WorkerOrders")
   User   User? @relation(fields: [userId], references: [id])
@@ -89,4 +94,11 @@ model OrderService {
 enum Gender {
   male
   female
+}
+
+enum OrderStatus {
+  pending
+  rejected
+  processed
+  completed
 }
