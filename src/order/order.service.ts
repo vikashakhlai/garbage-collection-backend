@@ -137,7 +137,7 @@ export class OrderService {
         comment: dto.comment ? dto.comment : '',
         weight: dto.weight,
         dimensions: dto.dimensions,
-        userId: +userId,
+        userId: userId ? +userId : null,
         isDisassembly: dto.isDisassembly,
         isHeavy: dto.isHeavy,
         hour: dto.hour,
