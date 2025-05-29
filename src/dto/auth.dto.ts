@@ -16,8 +16,8 @@ export class AuthRegisterDto {
   @IsString()
   middleName: string;
 
-  @IsString()
-  age: string;
+  @IsNumber()
+  age: number;
 
   @IsString()
   gender: 'male' | 'female';
