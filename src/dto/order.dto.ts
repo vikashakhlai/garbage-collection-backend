@@ -15,8 +15,19 @@ export class CreateOrderDto {
   @IsString()
   address: string;
 
+  @IsOptional()
+  @IsString()
+  flat?: string;
+
+  @IsOptional()
+  @IsString()
+  entrance?: string;
+
   @IsNumber()
   distance: number;
+
+  @IsNumber()
+  hour: number;
 
   @IsNumber()
   floor: number;
@@ -26,7 +37,10 @@ export class CreateOrderDto {
   comment?: string;
 
   @IsNumber()
-  hour: number;
+  weight: number;
+
+  @IsNumber()
+  dimensions: number;
 
   @IsBoolean()
   isHeavy: boolean;
