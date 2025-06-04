@@ -33,7 +33,7 @@ model User {
   workTime        Int?
   isConfirmDriver Boolean?
   licenseImage    String?
-  dimensions      Int?
+  dimensions      Decimal? @db.Decimal(10, 2)
 
   Order        Order[]
   WorkerOrders Order[] @relation("WorkerOrders")
@@ -49,7 +49,7 @@ model Service {
   description  String
   image        String
   workerType   String         @map("worker_type")
-  price        Int
+  price        Decimal        @db.Decimal(10, 2)
   OrderService OrderService[]
 
   @@map("service")
@@ -60,17 +60,17 @@ model Order {
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
   status     OrderStatus
-  totalPrice Int         @map("total_price")
+  totalPrice Decimal     @map("total_price") @db.Decimal(10, 2)
   phone      String
   date       DateTime
   time       String
   address    String
   flat       String?
   entrance   String?
-  distance   Int
+  distance   Int?
   hour       Int
   floor      Int
-  dimensions Int
+  dimensions Decimal     @db.Decimal(10, 2)
   weight     Int
 
   isHeavy       Boolean

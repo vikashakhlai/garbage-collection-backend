@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from 'src/dto/order.dto';
 import { PrismaService } from 'src/prisma.service';
 import { convertPostgreDate } from 'src/utils/convertPostgreDate';
@@ -33,11 +37,28 @@ export class OrderService {
       },
     });
   }
+
   async getAllActiveUserOrders(userId: number) {
     return await this.prisma.order.findMany({
       where: {
         status: 'pending',
         userId: +userId,
+      },
+      include: {
+        services: {
+          include: {
+            service: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getAllProcessedWorkerOrders(userId: number) {
+    return await this.prisma.order.findMany({
+      where: {
+        status: 'processed',
+        workerId: +userId,
       },
       include: {
         services: {
@@ -64,6 +85,11 @@ export class OrderService {
       },
     });
     if (!user) throw new NotFoundException('Пользователь не найден');
+
+    if (user.workerType === 'driver' && !user.isConfirmDriver) {
+      return [];
+    }
+
     return await this.prisma.order.findMany({
       where: {
         userId: +userId,
@@ -154,6 +180,7 @@ export class OrderService {
       },
     });
   }
+
   async confirmOrder(orderId: number, workerId: number) {
     const order = await this.prisma.order.findFirst({
       where: {
@@ -170,12 +197,52 @@ export class OrderService {
     });
     if (!worker) throw new NotFoundException('Работник не найден');
 
+    if (worker.workerType === 'driver' && !worker.isConfirmDriver)
+      throw new ConflictException('Нет подтверждения прав');
+
+    if (worker.workerType === 'driver' && order.dimensions > worker.dimensions)
+      throw new ConflictException('Невозможно выполнить данный заказ');
+
     await this.prisma.order.update({
       where: {
         id: +orderId,
       },
       data: {
         status: 'processed',
+        workerId: +worker.id,
+      },
+    });
+    return 'Заказ успешно подтвержден';
+  }
+
+  async completedOrder(orderId: number, workerId: number) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: +orderId,
+      },
+    });
+
+    if (!order) throw new NotFoundException('Заказ не найден');
+
+    const worker = await this.prisma.user.findFirst({
+      where: {
+        id: +workerId,
+      },
+    });
+    if (!worker) throw new NotFoundException('Работник не найден');
+
+    if (worker.workerType === 'driver' && !worker.isConfirmDriver)
+      throw new ConflictException('Невозможно выполнить заказ');
+
+    if (worker.workerType === 'driver' && order.dimensions > worker.dimensions)
+      throw new ConflictException('Невозможно выполнить данный заказ');
+
+    await this.prisma.order.update({
+      where: {
+        id: +orderId,
+      },
+      data: {
+        status: 'completed',
         workerId: +worker.id,
       },
     });
@@ -200,6 +267,27 @@ export class OrderService {
     });
     return 'Заказ успешно отменен';
   }
+
+  async setPendingOrder(orderId: number) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: +orderId,
+      },
+    });
+
+    if (!order) throw new NotFoundException('Заказ не найден');
+    await this.prisma.order.update({
+      where: {
+        id: +orderId,
+      },
+      data: {
+        status: 'pending',
+        workerId: null,
+      },
+    });
+    return 'Заказ успешно изменен';
+  }
+
   async deleteOrder(orderId: number) {
     const order = await this.prisma.order.findFirst({
       where: {

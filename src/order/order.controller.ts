@@ -37,6 +37,12 @@ export class OrderController {
     return this.orderService.getAllActiveUserOrders(userId);
   }
 
+  @Get('/worker/process')
+  @Auth()
+  async findAllProcessedUserOrders(@User('id') userId: number) {
+    return this.orderService.getAllProcessedWorkerOrders(userId);
+  }
+
   @Get('/user')
   @Auth()
   async findUserOrders(@User('id') userId: number) {
@@ -58,6 +64,16 @@ export class OrderController {
   }
 
   @HttpCode(200)
+  @Patch('/complete-order/:id')
+  @Auth()
+  async completedOrder(
+    @Param('id') orderId: number,
+    @User('id') workerId: number
+  ) {
+    return this.orderService.completedOrder(orderId, workerId);
+  }
+
+  @HttpCode(200)
   @Patch('/confirm-order/:id')
   @Auth()
   async checkOrder(@Param('id') orderId: number, @User('id') workerId: number) {
@@ -69,6 +85,13 @@ export class OrderController {
   @Auth()
   async unCheckOrder(@Param('id') orderId: number) {
     return this.orderService.unCheckOrder(orderId);
+  }
+
+  @HttpCode(200)
+  @Patch('/pending/:id')
+  @Auth()
+  async setPendingOrder(@Param('id') orderId: number) {
+    return this.orderService.setPendingOrder(orderId);
   }
 
   @HttpCode(200)

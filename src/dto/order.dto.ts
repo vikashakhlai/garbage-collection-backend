@@ -23,14 +23,16 @@ export class CreateOrderDto {
   @IsString()
   entrance?: string;
 
+  @IsOptional()
   @IsNumber()
-  distance: number;
+  distance?: number;
 
   @IsNumber()
   hour: number;
 
+  @IsOptional()
   @IsNumber()
-  floor: number;
+  floor?: number;
 
   @IsOptional()
   @IsString()
